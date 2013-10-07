@@ -1,0 +1,39 @@
+def graphene(maze, a, b, path):
+    bucket = []
+    direct = [(1, 0), (0, 1), (0,-1), (-1, 0)]
+    for keys in direct:
+         if maze[a+keys[0]][b+keys[1]] == 0 and ((a+keys[0]), \
+         (b+keys[1])) not in path:
+             bucket.append(keys)
+    return bucket
+    
+def checkio(data, path = [], cross = [], string_path = [], a=1, b=1):
+   direct = {(1, 0):"S", (-1, 0):"N",(0,-1):"W",(0, 1):"E"}
+   current_vertex = (a, b)
+   if path:
+     if path[-1] == (10, 10) and path[-1] != current_vertex:
+        path, cross, string_path = [], [], []
+   if current_vertex not in path:
+     path.append(current_vertex)
+   if current_vertex == (10, 10):
+       return ''.join(map(lambda x: direct[x], string_path))
+   c = graphene(data, a, b, path)
+   if not c:
+       me = cross.pop()
+       xes = 0
+       this = string_path[::-1]
+       for step in this:
+         a, b = a - step[0], b - step[1]
+         xes += 1
+         if (a, b) == me:
+             break
+       longroad = len(string_path) - xes
+       del string_path[longroad:]        
+       return checkio(data, path, cross, string_path, me[0], me[1])
+   that = c[0]
+   next_step1, next_step2 = a + that[0], b + that[1]
+   if len(c) > 1:
+     cross.append(current_vertex)
+   a, b = next_step1, next_step2
+   string_path.append(that)
+   return checkio(data, path, cross, string_path, a, b)
